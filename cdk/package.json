@@ -1,0 +1,32 @@
+{
+  "name": "recommendations-app",
+  "version": "0.1.0",
+  "author": "Ben Minahan",
+  "description": "App where people can share recommenations for movies, TV shows, music, etc",
+  "license": "ISC",
+  "scripts": {
+    "build": "tsc",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.32.2",
+    "@types/node": "^13.11.1",
+    "aws-cdk": "1.32.2",
+    "ts-node": "^8.1.0",
+    "typescript": "~3.7.2"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-certificatemanager": "^1.32.2",
+    "@aws-cdk/aws-cloudfront": "^1.32.2",
+    "@aws-cdk/aws-cognito": "^1.32.2",
+    "@aws-cdk/aws-dynamodb": "^1.32.2",
+    "@aws-cdk/aws-lambda": "^1.32.2",
+    "@aws-cdk/aws-lambda-nodejs": "^1.32.2",
+    "@aws-cdk/aws-route53": "^1.32.2",
+    "@aws-cdk/aws-route53-targets": "^1.32.2",
+    "@aws-cdk/aws-s3": "^1.32.2",
+    "@aws-cdk/aws-s3-deployment": "^1.32.2",
+    "@aws-cdk/core": "1.32.2",
+    "source-map-support": "^0.5.16"
+  }
+}

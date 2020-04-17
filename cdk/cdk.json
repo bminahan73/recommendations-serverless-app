@@ -1,0 +1,7 @@
+{
+  "app": "npm run build && node dist/index.js",
+  "context": {
+    "domain": "bminahan.com",
+    "subdomain": "www"
+  }
+}
