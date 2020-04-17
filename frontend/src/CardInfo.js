@@ -1,0 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class CardInfo {
+}
+exports.CardInfo = CardInfo;
+;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQ2FyZEluZm8uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJDYXJkSW5mby50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLE1BQWEsUUFBUTtDQUtwQjtBQUxELDRCQUtDO0FBQUEsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBjbGFzcyBDYXJkSW5mbyB7XHJcbiAgICB0aXRsZTogc3RyaW5nO1xyXG4gICAgaGVhZGVyOiBzdHJpbmc7XHJcbiAgICBjb250ZW50OiBzdHJpbmc7XHJcbiAgICBjb2xvcjogc3RyaW5nO1xyXG59OyJdfQ==
