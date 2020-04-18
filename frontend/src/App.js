@@ -13,7 +13,7 @@ const history = createBrowserHistory()
 const App = () => (
   <Router history={history}>
     <Route exact path="/" component={Home}/>
-    <Route exact path="/callback" component={AuthCallback}/>
+    <Route exact path="/auth-callback" component={AuthCallback}/>
   </Router>
 )
 

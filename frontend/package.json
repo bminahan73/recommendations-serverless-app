@@ -1,43 +1,49 @@
 {
-    "name": "webpack-test",
-    "version": "1.0.0",
-    "description": "testing webpack setup",
-    "main": "index.js",
-    "scripts": {
-        "tsc": "tsc",
-        "start": "webpack --config webpack.dev.js",
-        "build": "webpack --config webpack.prod.js",
-        "clean": "tsc -b --clean && rm -rf ./dist",
-        "watch": "tsc -w"
-    },
-    "author": "Ben Minahan",
-    "license": "ISC",
-    "devDependencies": {
-        "@babel/core": "^7.2.2",
-        "@babel/preset-env": "^7.3.1",
-        "awesome-typescript-loader": "^5.2.1",
-        "babel-loader": "^8.0.5",
-        "copy-node-modules": "^1.1.1",
-        "css-loader": "^3.5.2",
-        "fibers": "^4.0.2",
-        "html-webpack-plugin": "^4.2.0",
-        "node-sass": "^4.13.1",
-        "sass": "^1.26.3",
-        "sass-loader": "^8.0.2",
-        "source-map": "^0.7.3",
-        "source-map-loader": "^0.2.4",
-        "style-loader": "^1.1.3",
-        "tslint": "^6.1.1",
-        "typescript": "^3.8.3",
-        "webpack": "^4.29.0",
-        "webpack-cli": "^3.2.1",
-        "webpack-dev-server": "^3.1.14",
-        "webpack-merge": "^4.2.2"
-    },
-    "dependencies": {
-        "aws-amplify": "^3.0.8",
-        "bootstrap": "^4.4.1",
-        "jquery": "^3.5.0",
-        "popper.js": "^1.16.1"
-    }
+  "name": "redcommendations-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "React Frontend for recommendations app",
+  "author": "Ben Minahan",
+  "dependencies": {
+    "amazon-cognito-auth-js": "^1.3.2",
+    "amazon-cognito-identity-js": "^3.0.14",
+    "aws-sdk": "^2.498.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "^3.4.1",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0"
+  },
+  "scripts": {
+    "start": "cp src/config/app-config.local.json src/config/app-config.json && react-scripts start",
+    "build": "cp src/config/app-config.production.json src/config/app-config.json && react-scripts build",
+    "test": "cp src/config/app-config.local.json src/config/app-config.json react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-standard": "^4.0.0"
+  }
 }

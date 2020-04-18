@@ -1,8 +1,8 @@
 {
     "region": "us-east-1",
-    "userPool": "eu-west-2_z1Go5XdrZ",
+    "userPool": "us-east-1_XCT5YGLz7",
     "userPoolBaseUri": "https://auth.recommendations.bminahan.com",
-    "clientId": "4tnp4k64d5v4ah9dud3pj1kbs0",
+    "clientId": "2h83mam0gt49m78afd3dv28j62",
     "callbackUri": "https://recommendations.bminahan.com/auth-callback",
     "signoutUri": "https://recommendations.bminahan.com",
     "tokenScopes": [

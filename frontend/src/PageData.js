@@ -1,6 +1,0 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class PageData {
-}
-exports.PageData = PageData;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZURhdGEuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJQYWdlRGF0YS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUVBLE1BQWEsUUFBUTtDQUdwQjtBQUhELDRCQUdDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ2FyZEluZm8gfSBmcm9tICcuL0NhcmRJbmZvJztcclxuXHJcbmV4cG9ydCBjbGFzcyBQYWdlRGF0YSB7XHJcbiAgICBjYXJkczogQ2FyZEluZm9bXTtcclxuICAgIHByb2dyZXNzQ29sb3I6IHN0cmluZztcclxufSJdfQ==

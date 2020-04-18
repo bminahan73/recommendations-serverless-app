@@ -1,75 +1,111 @@
-import cloudfront = require('@aws-cdk/aws-cloudfront');
-import route53 = require('@aws-cdk/aws-route53');
-import s3 = require('@aws-cdk/aws-s3');
-import s3deploy = require('@aws-cdk/aws-s3-deployment');
-import acm = require('@aws-cdk/aws-certificatemanager');
-import cdk = require('@aws-cdk/core');
-import targets = require('@aws-cdk/aws-route53-targets/lib');
+import { CloudFrontWebDistribution, SSLMethod, SecurityPolicyProtocol, OriginProtocolPolicy, OriginSslPolicy, CloudFrontAllowedMethods, CloudFrontAllowedCachedMethods, Behavior } from '@aws-cdk/aws-cloudfront';
+import { ARecord, RecordTarget, IHostedZone } from '@aws-cdk/aws-route53';
+import { Bucket } from '@aws-cdk/aws-s3';
+import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
+import { DnsValidatedCertificate } from '@aws-cdk/aws-certificatemanager';
+import { CfnOutput, RemovalPolicy } from '@aws-cdk/core';
+import { CloudFrontTarget } from '@aws-cdk/aws-route53-targets/lib';
 import { Construct } from '@aws-cdk/core';
-import { OriginAccessIdentity } from '@aws-cdk/aws-cloudfront';
 
 export interface StaticSiteProps {
-    domainName: string;
-    siteSubDomain: string;
+    zone: IHostedZone,
+    siteDomain: string;
     contentsDir: string
 }
 
 export class StaticSite extends Construct {
-    siteDomain: string;
 
     constructor(parent: Construct, name: string, props: StaticSiteProps) {
         super(parent, name);
 
-        this.siteDomain = `${props.siteSubDomain}.${props.domainName}`;
-        new cdk.CfnOutput(this, 'Site', { value: `https://${this.siteDomain}` });
+        new CfnOutput(this, 'Site', { value: `https://${props.siteDomain}` });
 
-        const siteBucket = new s3.Bucket(this, 'SiteBucket', {
-            bucketName: this.siteDomain,
+        const siteBucket = new Bucket(this, 'SiteBucket', {
+            bucketName: props.siteDomain,
             websiteIndexDocument: 'index.html',
             websiteErrorDocument: 'error.html',
-            removalPolicy: cdk.RemovalPolicy.DESTROY,
+            removalPolicy: RemovalPolicy.DESTROY,
+            publicReadAccess: true
         });
-        new cdk.CfnOutput(this, 'Bucket', { value: siteBucket.bucketName });
+        new CfnOutput(this, 'Bucket', { value: siteBucket.bucketName });
 
-        const zone = route53.HostedZone.fromLookup(this, 'Zone', { domainName: props.domainName });
-
-        const certificateArn = new acm.DnsValidatedCertificate(this, 'SiteCertificate', {
-            domainName: this.siteDomain,
-            hostedZone: zone
+        const certificateArn = new DnsValidatedCertificate(this, 'SiteCertificate', {
+            domainName: props.siteDomain,
+            hostedZone: props.zone
         }).certificateArn;
-        new cdk.CfnOutput(this, 'Certificate', { value: certificateArn });
+        new CfnOutput(this, 'Certificate', { value: certificateArn });
 
-        const accessId = new OriginAccessIdentity(this, "OriginAccessIdentity");
+        const CreateCacheBehavior = function (pathPattern: string) : Behavior {
+            return {
+                isDefaultBehavior: false,
+                compress: true,
+                allowedMethods: CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+                cachedMethods: CloudFrontAllowedCachedMethods.GET_HEAD_OPTIONS,
+                pathPattern: pathPattern
+            };
+        };
 
-        const distribution = new cloudfront.CloudFrontWebDistribution(this, 'SiteDistribution', {
+        const distribution = new CloudFrontWebDistribution(this, 'SiteDistribution', {
             aliasConfiguration: {
                 acmCertRef: certificateArn,
                 names: [
-                    this.siteDomain,
+                    props.siteDomain,
                 ],
-                sslMethod: cloudfront.SSLMethod.SNI,
-                securityPolicy: cloudfront.SecurityPolicyProtocol.TLS_V1_1_2016,
+                sslMethod: SSLMethod.SNI,
+                securityPolicy: SecurityPolicyProtocol.TLS_V1_1_2016,
             },
             originConfigs: [
                 {
-                    s3OriginSource: {
-                        originAccessIdentity: accessId,
-                        s3BucketSource: siteBucket
+                    //custom instead of S3 because we need to be able to do server-side logic for React (Routing)
+                    customOriginSource: {
+                        domainName: siteBucket.bucketWebsiteDomainName,
+                        originProtocolPolicy: OriginProtocolPolicy.HTTP_ONLY
                     },
-                    behaviors: [{ isDefaultBehavior: true }],
+                    behaviors: [
+                        { 
+                            isDefaultBehavior: true,
+                            compress: true,
+                            allowedMethods: CloudFrontAllowedMethods.ALL,
+                            cachedMethods: CloudFrontAllowedCachedMethods.GET_HEAD_OPTIONS,
+                            forwardedValues: {
+                                queryString: true,
+                                cookies: {
+                                    forward: 'all'
+                                }
+                            }
+                        },
+                        CreateCacheBehavior("*.css"),
+                        CreateCacheBehavior("*.js"),
+                        CreateCacheBehavior("*.png"),
+                        CreateCacheBehavior("*.svg"),
+                        CreateCacheBehavior("*.jpg"),
+                        CreateCacheBehavior("*.jpeg")
+                    ]
+                }
+            ],
+            errorConfigurations: [
+                {
+                    errorCode: 403,
+                    responseCode: 200,
+                    responsePagePath: '/index.html'
+                },
+                {
+                    errorCode: 404,
+                    responseCode: 200,
+                    responsePagePath: '/index.html'
                 }
             ]
         });
-        new cdk.CfnOutput(this, 'DistributionId', { value: distribution.distributionId });
+        new CfnOutput(this, 'DistributionId', { value: distribution.distributionId });
 
-        new route53.ARecord(this, 'AliasRecord', {
-            recordName: this.siteDomain,
-            target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
-            zone
+        new ARecord(this, 'AliasRecord', {
+            recordName: props.siteDomain,
+            target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+            zone: props.zone
         });
 
-        new s3deploy.BucketDeployment(this, 'DeployWithInvalidation', {
-            sources: [s3deploy.Source.asset(props.contentsDir)],
+        new BucketDeployment(this, 'DeployWithInvalidation', {
+            sources: [Source.asset(props.contentsDir)],
             destinationBucket: siteBucket,
             distribution,
             distributionPaths: ['/*'],
