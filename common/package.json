@@ -1,0 +1,21 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "common libraries for lambdas",
+  "main": "Recommendation.ts",
+  "dependencies": {
+    "uuid": "^7.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^13.11.1",
+    "@types/uuid": "^7.0.2",
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ben Minahan",
+  "license": "ISC"
+}

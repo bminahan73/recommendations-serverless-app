@@ -1,0 +1,14 @@
+{
+    "region": "us-east-1",
+    "userPool": "eu-west-2_z1Go5XdrZ",
+    "userPoolBaseUri": "https://auth.recommendations.bminahan.com",
+    "clientId": "4tnp4k64d5v4ah9dud3pj1kbs0",
+    "callbackUri": "https://recommendations.bminahan.com/auth-callback",
+    "signoutUri": "https://recommendations.bminahan.com",
+    "tokenScopes": [
+        "openid",
+        "email",
+        "profile",
+        "https://recommendations.bminahan.com/full"                
+    ]
+}

@@ -1,4 +1,4 @@
-const uuid = require('uuid');
+import { v1 as uuidv1 } from 'uuid';
 
 export interface IRecommendation {
     type: RecommendationType,
@@ -18,7 +18,7 @@ export class Recommendation implements IRecommendation {
     additionalNotes: string;
 
     constructor(type: RecommendationType, title: string, additionalNotes: string = "") {
-        this.id = uuid.v5();
+        this.id = uuidv1();
         this.type = type;
         this.title = title;
         this.additionalNotes = additionalNotes;

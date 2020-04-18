@@ -1,21 +1,35 @@
-import { IRecommendation } from '../../../common/Recommendation';
-const aws = require('aws-sdk');
-const uuid = require('uuid');
+import { IRecommendation, Recommendation } from '../../../common/Recommendation';
 
-var docClient = new aws.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+const AWS = require('aws-sdk');
 
-export const handler = async (event: IRecommendation): Promise<any> => {
-    const id = uuid.v5();
+var dynamodb  = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
+
+export const handler = function (event: IRecommendation) {
+
+    console.info(`event received:\n${JSON.stringify(event)}`);
+    let item = new Recommendation(event.type,event.title,event.additionalNotes);
+    
+    console.debug(`item generated:\n${JSON.stringify(item)}`);
+
     const params = {
         TableName: process.env.TABLE_NAME,
-        Item: event
+        Item: AWS.DynamoDB.Converter.marshall(item)
     };
 
-    docClient.put(params, function (err: any) {
-        if (err) {
-            console.error(`unable to add ${event.type} recommendation for ${event.title}. Error: ${JSON.stringify(err, null, 2)}`);
-        } else {
-            console.log(`added recommendation with id ${id}`);
+    console.debug(`params generated:\n${JSON.stringify(params)}`);
+
+    dynamodb.putItem(params).promise().then(
+        function(err: any, data: any) {
+            if (err) {
+                console.info('err');
+                console.error(err, err.stack);
+            }
+            else {
+                console.info('no err');
+                console.log(data);
+            }
         }
-    });
+    );
+
+    console.debug('after dynamo putItem');
 }

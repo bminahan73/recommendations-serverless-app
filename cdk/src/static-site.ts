@@ -14,46 +14,39 @@ export interface StaticSiteProps {
     contentsDir: string
 }
 
-/**
- * Static site infrastructure, which deploys site content to an S3 bucket.
- *
- * The site redirects from HTTP to HTTPS, using a CloudFront distribution,
- * Route53 alias record, and ACM certificate.
- */
 export class StaticSite extends Construct {
+    siteDomain: string;
+
     constructor(parent: Construct, name: string, props: StaticSiteProps) {
         super(parent, name);
 
-        const zone = route53.HostedZone.fromLookup(this, 'Zone', { domainName: props.domainName });
-        const siteDomain = props.siteSubDomain + '.' + props.domainName;
-        new cdk.CfnOutput(this, 'Site', { value: 'https://' + siteDomain });
+        this.siteDomain = `${props.siteSubDomain}.${props.domainName}`;
+        new cdk.CfnOutput(this, 'Site', { value: `https://${this.siteDomain}` });
 
-        // Content bucket
         const siteBucket = new s3.Bucket(this, 'SiteBucket', {
-            bucketName: siteDomain,
+            bucketName: this.siteDomain,
             websiteIndexDocument: 'index.html',
             websiteErrorDocument: 'error.html',
-            // The default removal policy is RETAIN, which means that cdk destroy will not attempt to delete
-            // the new bucket, and it will remain in your account until manually deleted. By setting the policy to
-            // DESTROY, cdk destroy will attempt to delete the bucket, but will error if the bucket is not empty.
-            removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+            removalPolicy: cdk.RemovalPolicy.DESTROY,
         });
         new cdk.CfnOutput(this, 'Bucket', { value: siteBucket.bucketName });
 
-        // TLS certificate
+        const zone = route53.HostedZone.fromLookup(this, 'Zone', { domainName: props.domainName });
+
         const certificateArn = new acm.DnsValidatedCertificate(this, 'SiteCertificate', {
-            domainName: siteDomain,
+            domainName: this.siteDomain,
             hostedZone: zone
         }).certificateArn;
         new cdk.CfnOutput(this, 'Certificate', { value: certificateArn });
 
         const accessId = new OriginAccessIdentity(this, "OriginAccessIdentity");
 
-        // CloudFront distribution that provides HTTPS
         const distribution = new cloudfront.CloudFrontWebDistribution(this, 'SiteDistribution', {
             aliasConfiguration: {
                 acmCertRef: certificateArn,
-                names: [siteDomain],
+                names: [
+                    this.siteDomain,
+                ],
                 sslMethod: cloudfront.SSLMethod.SNI,
                 securityPolicy: cloudfront.SecurityPolicyProtocol.TLS_V1_1_2016,
             },
@@ -69,14 +62,12 @@ export class StaticSite extends Construct {
         });
         new cdk.CfnOutput(this, 'DistributionId', { value: distribution.distributionId });
 
-        // Route53 alias record for the CloudFront distribution
-        new route53.ARecord(this, 'SiteAliasRecord', {
-            recordName: siteDomain,
+        new route53.ARecord(this, 'AliasRecord', {
+            recordName: this.siteDomain,
             target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
             zone
         });
 
-        // Deploy site contents to S3 bucket
         new s3deploy.BucketDeployment(this, 'DeployWithInvalidation', {
             sources: [s3deploy.Source.asset(props.contentsDir)],
             destinationBucket: siteBucket,

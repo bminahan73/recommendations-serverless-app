@@ -1,4 +1,3 @@
-import { IRecommendationsByTypeRequest, IRecommendation } from '../../../common/Recommendation';
 const aws = require('aws-sdk');
 
 var docClient = new aws.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
