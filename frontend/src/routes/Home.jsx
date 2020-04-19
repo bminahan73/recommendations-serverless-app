@@ -1,30 +1,23 @@
-import React, { Component } from "react";
+import React from "react";
 import NavBar from "../components/navBar";
 import RecommendationForm from "../components/recommendationForm";
 import RecommendationsList from "../components/recommendationsList";
 import { connect } from "react-redux";
 
-const mapStateToProps = (state) => {
-  return {
-    session: state.session,
-    isLoggedIn: state.isLoggedIn,
-  };
-};
+const mapStateToProps = (state) => ({
+  isLoggedIn: state.session.isLoggedIn,
+});
 
-class Home extends Component {
-  render() {
-    return (
+const Home = ({ isLoggedIn }) => (
+  <React.Fragment>
+    <NavBar />
+    {isLoggedIn ? (
       <React.Fragment>
-        <NavBar />
-        {this.props.isLoggedIn ? (
-          <React.Fragment>
-            <RecommendationForm />
-            <RecommendationsList />
-          </React.Fragment>
-        ) : null}
+        <RecommendationForm />
+        <RecommendationsList />
       </React.Fragment>
-    );
-  }
-}
+    ) : null}
+  </React.Fragment>
+);
 
 export default connect(mapStateToProps)(Home);

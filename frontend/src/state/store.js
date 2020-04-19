@@ -1,9 +1,9 @@
 import { createStore, applyMiddleware, compose } from "redux";
-import reducer from "./reducer";
+import reducers from "./reducers";
 import thunk from "redux-thunk";
 
 const storeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(reducer, storeEnhancers(applyMiddleware(thunk)));
+const store = createStore(reducers, storeEnhancers(applyMiddleware(thunk)));
 
 export default store;

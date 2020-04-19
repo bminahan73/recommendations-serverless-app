@@ -15,37 +15,27 @@ function initSessionFromCallbackURI(callbackHref) {
   };
 }
 
-const mapStateToProps = (state) => {
-  return {
-    session: state.session,
-    isLoggedIn: state.isLoggedIn,
-  };
-};
+const mapStateToProps = (state) => ({
+  session: state.session,
+});
 
-function mapDispatchToProps(dispatch) {
-  return {
-    initSessionFromCallbackURI: (href) =>
-      dispatch(initSessionFromCallbackURI(href)),
-  };
-}
+const mapDispatchToProps = (dispatch) => ({
+  initSessionFromCallbackURI: (href) =>
+    dispatch(initSessionFromCallbackURI(href)),
+});
 
 class AuthCallback extends Component {
-  // If a Cognito auth code is in the URL (could be a hash or query component), init the new session
-  componentDidMount() {
+  render() {
+    // if URI contains the code and state, generate a new session from info, then redirect to Home
     if (this.props.location.hash || this.props.location.search) {
       this.props.initSessionFromCallbackURI(window.location.href);
-    }
-  }
-
-  render() {
-    if (
-      (!this.props.location.hash && !this.props.location.search) ||
-      this.props.isLoggedIn
-    ) {
       return <Redirect to="/" />;
     }
-
-    return <div />;
+    //if already logged in, redirect to home
+    if (this.props.session.isLoggedIn) {
+      return <Redirect to="/" />;
+    }
+    return <p>error</p>;
   }
 }
 

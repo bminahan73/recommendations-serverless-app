@@ -1,35 +1,24 @@
-import React, { Component } from "react";
-import { List, ListItem, ListItemText } from "@material-ui/core";
+import React from "react";
 import { connect } from "react-redux";
+import { List, ListItem, ListItemText } from "@material-ui/core";
 
-const mapStateToProps = (state) => {
-  return { recommendations: state.recommendations };
-};
+const mapStateToProps = (state) => ({
+  recommendations: state.recommendations,
+});
 
-class RecommendationsList extends Component {
-  state = {
-    recommendations: this.props.recommendations,
-  };
-  render() {
-    return (
-      <List>
-        {() =>
-          this.props.recommendations.map((recommendation) => (
-            <ListItem alignItems="flex-start">
-              <ListItemText
-                primary={`${recommendation.title} (recommendation.type)`}
-                secondary={
-                  <React.Fragment>
-                    {recommendation.additionalNotes}
-                  </React.Fragment>
-                }
-              />
-            </ListItem>
-          ))
-        }
-      </List>
-    );
-  }
-}
+const RecommendationsList = ({ recommendations }) => (
+  <React.Fragment>
+    <List>
+      {recommendations.map((r) => (
+        <ListItem alignItems="flex-start">
+          <ListItemText
+            primary={`${r.title} (${r.type})`}
+            secondary={r.additionalNotes}
+          />
+        </ListItem>
+      ))}
+    </List>
+  </React.Fragment>
+);
 
 export default connect(mapStateToProps)(RecommendationsList);

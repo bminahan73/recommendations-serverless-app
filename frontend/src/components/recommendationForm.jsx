@@ -10,33 +10,22 @@ import {
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
-import { addRecommendation, updateRecommendationForm } from "../state/actions";
+import { addRecommendation } from "../state/actions";
 import { connect } from "react-redux";
 
-const mapStateToProps = (state) => {
-  return { formContents: state.recommendationFormContents };
-};
-
-const mapDispatchToProps = { addRecommendation, updateRecommendationForm };
-
 class RecommendationForm extends Component {
-  /*handleChangeToTitle(event) {
-    let newFormContents = this.props.formContents;
-    newFormContents.title = event.target.value;
-    this.props.updateRecommendationForm(newFormContents);
-  }
+  state = {
+    title: "",
+    type: "",
+    additionalNotes: "",
+  };
 
-  handleChangeToType(event) {
-    let newFormContents = this.props.formContents;
-    newFormContents.type = event.target.value;
-    this.props.updateRecommendationForm(newFormContents);
-  }
-
-  handleChangeToAdditionalNotes(event) {
-    let newFormContents = this.props.formContents;
-    newFormContents.additionalNotes = event.target.value;
-    this.props.updateRecommendationForm(newFormContents);
-  }*/
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({
+      [name]: value,
+    });
+  };
 
   render() {
     return (
@@ -45,12 +34,16 @@ class RecommendationForm extends Component {
         <Card variant="outlined">
           <CardContent>
             <TextField
+              inputProps={{
+                name: "title",
+                id: "title",
+              }}
               id="title"
               label="Title"
               placeholder="enter title..."
               variant="outlined"
-              value={this.props.formContents.title}
-              //onChange={this.handleChangeToTitle}
+              value={this.state.title}
+              onChange={this.handleChange}
             />
             <br />
             <br />
@@ -63,8 +56,8 @@ class RecommendationForm extends Component {
                   name: "type",
                   id: "type",
                 }}
-                value={this.props.formContents.type}
-                //onChange={this.handleChangeToType}
+                value={this.state.type}
+                onChange={this.handleChange}
               >
                 <option aria-label="None" value="" />
                 <option value="MOVIE">Movie/Film</option>
@@ -76,14 +69,18 @@ class RecommendationForm extends Component {
             <br />
             <br />
             <TextField
+              inputProps={{
+                name: "additionalNotes",
+                id: "additionalNotes",
+              }}
               id="additionalNotes"
               label="Additional Notes"
               placeholder="enter notes here..."
               multiline
               rows={4}
               variant="outlined"
-              value={this.props.formContents.additionalNotes}
-              //onChange={this.handleChangeToAdditionalNotes}
+              value={this.state.additionalNotes}
+              onChange={this.handleChange}
             />
             <br />
             <br />
@@ -92,14 +89,7 @@ class RecommendationForm extends Component {
             <Button
               variant="outlined"
               color="primary"
-              //onClick={this.props.addRecommendation(this.props.formContents)}
-              onClick={() =>
-                this.props.addRecommendation({
-                  title: "Lion King",
-                  type: "MOVIE",
-                  additionalNotes: "it was awesome!",
-                })
-              }
+              onClick={() => this.props.addRecommendation(this.state)}
             >
               Make Recommendation
             </Button>
@@ -110,4 +100,9 @@ class RecommendationForm extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecommendationForm);
+const mapDispatchToProps = (dispatch) => ({
+  addRecommendation: (recommendation) =>
+    dispatch(addRecommendation(recommendation)),
+});
+
+export default connect(null, mapDispatchToProps)(RecommendationForm);
