@@ -10,7 +10,7 @@
     "@material-ui/icons": "^4.9.1",
     "amazon-cognito-auth-js": "^1.3.2",
     "amazon-cognito-identity-js": "^3.0.14",
-    "aws-sdk": "^2.498.0",
+    "aws-sdk": "^2.1693.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
